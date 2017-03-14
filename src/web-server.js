@@ -29,11 +29,12 @@ app.get('/todos', function(req, res) {
 });
 
 app.get('/todos/:id', function(req, res) {
-	var todoId = req.params.id;
+	var todoId = parseInt(req.params.id, 10);
 	var todoMatched;
 	todos.forEach(function(todo){
-		if (todo.id === todoId)
-		   todoMatched = todo;
+           if (todo.id === todoId) {
+		todoMatched = todo;
+	   }
 	});
 
 	if (todoMatched) {
