@@ -28,6 +28,11 @@ app.get('/todos', function(req, res) {
 	res.json(todos);
 });
 
+app.get('/todos/:id', function(req, res) {
+	//res.send('Request to get todo of id:' + req.params.id);
+	res.json(todos[req.params.id-1]);
+});
+
 app.use(express.static(__dirname + '/../public'));
 
 app.listen(PORT, function(req,res){
