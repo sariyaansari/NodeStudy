@@ -1,0 +1,94 @@
+
+git configuration:
+
+//SET USER
+git config --global user.name "Sariya Ansari"
+git config --global user.email "sariyaansari@gmail.com"
+
+//SET GIT INTERNALS:
+git config --global push.default matching
+git config --global alias.co checkout
+
+//GOTO PROJECT FOLDER - to create .git folder
+git init
+ls -a 
+
+//to get git status that what all is not yet tracked by git or not added
+git status
+
+//add all untracked file in git environment < (DOT) . for all files >
+git add .
+NOTE: run git status to check what all has been added in GIT
+
+//remove folder from git cache
+git rm --cached -r node_module
+
+
+=> Create .gitignore file in project root and mention all the file/folder to be ignored file adding or tracking
+
+//run 
+git status
+
+//Commit in GIT
+git commit -a -m  "Comment will go here"
+
+
+//To check difference in repository and current changed code 
+git diff
+
+//GENERAL command
+//add individual file 
+git add <filename>
+
+SSH CONFIGURATION ====================================
+
+ls -al ~/.ssh (if nothing displaye e.g. id_ras.pub then generate keys)
+
+//generate ssh keys @ user home
+ssh-keygen -t rsa -b 4096 -C "sariyaansari@gmail.com" => it will ask few question, prefer not to give anything for testing purpose
+
+//goto www.github.com to your source 
+ - login in github.com 
+ - Add SSH key if not added
+ - Create repository if not created
+ - run below commands in web-server-test project created locally and added to git using above command
+   	$: git remote add origin https://github.com/sariyaansari/NodeStudy.git
+		run $: git remote => to check command executed successfully 'origin' should come
+		run $: git remote -v => to check push and get branch
+	$: git push -u origin master => to push in github repository
+
+======================= SET UP HEROKU ==========================================================================
+
+//goto heroku.com
+ - create account if not having
+ - goto manage accounts or Account Settings and add the SSH keys what was added in github above
+ - now search heroku toolbelt install in google and find the link in search list and open and install or visit page "toolbelt.heroku.com"
+   OR https://devcenter.heroku.com/articles/heroku-cli#getting-started
+
+ - wget https://cli-assets.heroku.com/branches/stable/heroku-linux-386.tar.gz -O heroku.tar.gz
+ - tar -xvzf heroku.tar.gz -C /usr/local/lib
+ - /usr/local/lib/heroku/install
+
+
+============ DEPLOY WEB SERVER APP ON HEROKU ===============================================
+//Create app (make sure you are sitting at project folder where .git is residing)
+$ heroku create
+
+//check links fetch and push created 
+$ git remote -v
+
+//Push git source to heroku
+$ git push heroku master
+ - get the link from deployed log where it is deployed 
+
+HOORRAYYY..your code is live now 
+
+
+
+
+
+  
+
+
+ 
+
