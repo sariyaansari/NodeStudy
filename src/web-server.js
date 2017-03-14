@@ -29,8 +29,18 @@ app.get('/todos', function(req, res) {
 });
 
 app.get('/todos/:id', function(req, res) {
-	//res.send('Request to get todo of id:' + req.params.id);
-	res.json(todos[req.params.id-1]);
+	var todoId = req.params.id;
+	var todoMatched;
+	todos.forEach(function(todo){
+		if (todo.id === todoId)
+		   todoMatched = todo;
+	});
+
+	if (todoMatched) {
+	   res.json(todoMatched);
+	} else {
+	   res.status(404).send();
+	}
 });
 
 app.use(express.static(__dirname + '/../public'));
