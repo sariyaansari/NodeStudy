@@ -36,9 +36,18 @@ app.get('/about', middleware.requireAuthentication, function(req, res) {
 	res.send('About Us');
 });
 
-/** Get all todos using HTTP GET */
+/** Get all todos using HTTP GET /todos*/
+/** Get todos based on query e.g. /todos?completed=true */
 app.get('/todos', function(req, res) {
-	res.json(todos);
+	var queryParams = req.query;
+	var filteredTodos = todos;
+
+	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
+		filteredTodos = _.where(filteredTodos, {completed: true});
+	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
+		filteredTodos = _.where(filteredTodos, {completed: false});
+	}
+	res.json(filteredTodos);
 });
 
 /** Get specific todo using 'id' by HTTP GET */
