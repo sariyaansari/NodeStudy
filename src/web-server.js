@@ -54,10 +54,10 @@ app.get('/todos/:id', function(req, res) {
 app.post('/todos', function(req, res) {
 	var body = req.body;
 	
-	if (!_.isBool(body.completed) || 
+	if (!_.isBoolean(body.completed) || 
 	    !_.isString(body.description) || 
 	    body.description.trim().length === 0) {
-		return res.status(400).send();
+		return res.status(400).send();		
 	}
 	
 	body.id = ++todoCurrId;
