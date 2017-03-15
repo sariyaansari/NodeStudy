@@ -1,6 +1,8 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var middleware = require('./middleware.js');
 var app = express();
+var 
 var PORT = process.env.PORT || 3000;
 
 var todos = [{
@@ -18,6 +20,15 @@ var todos = [{
 		description: 'Publish the application',
 		completed: false
 	    }];
+
+var todoCurrId = 3;
+
+/*
+  when request come we will be able to parse the request using express,
+  added to parse data for post request 
+*/
+app.use(bodyParser.json());
+
 app.use(middleware.logger);
 
 app.get('/about', middleware.requireAuthentication, function(req, res) {
@@ -42,6 +53,19 @@ app.get('/todos/:id', function(req, res) {
 	} else {
 	   res.status(404).send();
 	}
+});
+
+app.post('/todos', function(req, res) {
+	var body = req.body;
+	var newTodo = {};
+
+	newTodo.id = ++todoCurrId;
+	newTodo.description = body.description;
+	newTodo.completed = body.completed;
+	todos.push(newTodo);
+
+	console.log('description ' + body.description);
+	res.json(todos[todoCurrId]);
 });
 
 app.use(express.static(__dirname + '/../public'));
