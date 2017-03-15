@@ -2,7 +2,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var middleware = require('./middleware.js');
 var app = express();
-var 
 var PORT = process.env.PORT || 3000;
 
 var todos = [{
