@@ -1,6 +1,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var _ = require('underscore')
 var middleware = require('./middleware.js');
+
 var app = express();
 var PORT = process.env.PORT || 3000;
 
@@ -20,7 +22,7 @@ var todos = [{
 		completed: false
 	    }];
 
-var todoCurrId = 3;
+var todoCurrId = todos.length;
 
 /*
   when request come we will be able to parse the request using express,
@@ -40,12 +42,7 @@ app.get('/todos', function(req, res) {
 
 app.get('/todos/:id', function(req, res) {
 	var todoId = parseInt(req.params.id, 10);
-	var todoMatched;
-	todos.forEach(function(todo){
-           if (todo.id === todoId) {
-		todoMatched = todo;
-	   }
-	});
+	var todoMatched = _.findWhere(todos, {id: todoId});
 
 	if (todoMatched) {
 	   res.json(todoMatched);
@@ -56,12 +53,15 @@ app.get('/todos/:id', function(req, res) {
 
 app.post('/todos', function(req, res) {
 	var body = req.body;
-	var newTodo = {};
-
-	newTodo.id = ++todoCurrId;
-	newTodo.description = body.description;
-	newTodo.completed = body.completed;
-	todos.push(newTodo);
+	
+	if (!_.isBool(body.completed) || 
+	    !_.isString(body.completed) || 
+	    body.description.trim().length ===0) {
+		return res.status(400).send();
+	}
+	
+	body.id = ++todoCurrId;
+	todos.push(body);
 
 	console.log('description ' + body.description);
 	res.json(todos[todoCurrId-1]);
