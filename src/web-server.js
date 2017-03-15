@@ -64,7 +64,7 @@ app.post('/todos', function(req, res) {
 	todos.push(newTodo);
 
 	console.log('description ' + body.description);
-	res.json(todos[todoCurrId]);
+	res.json(todos[todoCurrId-1]);
 });
 
 app.use(express.static(__dirname + '/../public'));
