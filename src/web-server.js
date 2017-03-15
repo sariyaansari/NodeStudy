@@ -52,7 +52,8 @@ app.get('/todos/:id', function(req, res) {
 });
 
 app.post('/todos', function(req, res) {
-	var body = req.body;
+	//If request body is having unnecessary key-value pair apart from description and completed
+	var body = _.pick(req.body, 'description', 'completed');
 	
 	if (!_.isBoolean(body.completed) || 
 	    !_.isString(body.description) || 
@@ -60,6 +61,7 @@ app.post('/todos', function(req, res) {
 		return res.status(400).send();		
 	}
 	
+	body.description = body.description.trim(); //trim leading and trailing blanks in description value
 	body.id = ++todoCurrId;
 	todos.push(body);
 
