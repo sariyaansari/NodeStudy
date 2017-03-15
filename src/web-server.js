@@ -55,8 +55,8 @@ app.post('/todos', function(req, res) {
 	var body = req.body;
 	
 	if (!_.isBool(body.completed) || 
-	    !_.isString(body.completed) || 
-	    body.description.trim().length ===0) {
+	    !_.isString(body.description) || 
+	    body.description.trim().length === 0) {
 		return res.status(400).send();
 	}
 	
