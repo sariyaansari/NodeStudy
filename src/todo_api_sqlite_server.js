@@ -6,6 +6,8 @@ var db = require('./db.js');
 var app = express();
 var PORT = process.env.PORT || 9090; //replace 9090 with your choice of PORT No.
 
+app.use(bodyParser.json());
+
 //Request post received with data
 app.post('/todos', function(req, res) {
     //Parsing schema data from request body it could be there or not
@@ -38,6 +40,7 @@ app.get('/todos/:id', function(req,res) {
 /** Get all todos using HTTP GET /todos*/
 /** Get todos based on query e.g. /todos?completed=true */
 /** Get todos based on query e.g. /todos?completed=false&desc=work*/
+/** Note: where clause is working on OR condition for multiple conditions*/
 app.get('/todos', function(req, res){
   var query = req.query;
   where = {};
@@ -48,7 +51,7 @@ app.get('/todos', function(req, res){
     where.completed = false;
   }
 
-  if (query.hasOwnProperty('description') && query.description.length > 0) {
+  if (query.hasOwnProperty('description') && query.desc.length > 0) {
     where.description = {
       $like: '%' + query.desc + '%'
     }
@@ -80,7 +83,7 @@ app.delete('/todos/:id', function(req, res){
   });
 });
 
-/** Update specific table record based on id using HTTP Put */
+/** Update specific table record based on requesting 'id' using HTTP PUT */
 app.put('/todos/:id', function(req, res) {
   var id   = parseInt(req.params.id, 10);
   var body = _.pick(req.body, 'description', 'completed');
