@@ -64,6 +64,23 @@ app.get('/todos', function(req, res){
 
 });
 
+/** Delete record using HTTP delete from sqlite */
+app.delete('/todos/:id', function(req, res){
+  var id = parseInt(req.params.id, 10);
+  where = {};
+
+  where.id = id;
+  db.todo.destroy({where: where}).then(function(todos){
+    if (todos >= 1){
+      res.json({"info": "item deleted successfully"});
+    } else {
+      res.json({"info": "no item exists with requesting ID"});
+    }
+  }, function(err){
+    res.status(500).send();
+  });
+
+});
 
 /** syncing everything not only 'todo' table*/
 db.sequelize.sync().then(function(){
