@@ -15,7 +15,7 @@ app.post('/todos', function(req, res) {
     db.todo.create(body).then(function (todo) {
 	       res.json(todo.toJSON());
     }, function(err){
-	       res.status(404).send();
+	       res.status(404).json({"error": "could not store data"});
     });
 });
 
@@ -26,10 +26,10 @@ app.get('/todos/:id', function(req,res) {
     if (todo) {
       res.json(todo.toJSON());
     } else {
-      res.status(404).send();
+      res.status(404).json({"error": "Bad Request"});
     }
   }, function(err) {
-    res.status(500).send();
+    res.status(500).json({"error":  "Unknown error"});
   });
 
 });
@@ -37,7 +37,7 @@ app.get('/todos/:id', function(req,res) {
 //Request HTTP GET to get records from sqlite table
 /** Get all todos using HTTP GET /todos*/
 /** Get todos based on query e.g. /todos?completed=true */
-/** Get todos based on query e.g. /todos?completed=false&q=work*/
+/** Get todos based on query e.g. /todos?completed=false&desc=work*/
 app.get('/todos', function(req, res){
   var query = req.query;
   where = {};
@@ -68,7 +68,6 @@ app.get('/todos', function(req, res){
 app.delete('/todos/:id', function(req, res){
   var id = parseInt(req.params.id, 10);
   where = {};
-
   where.id = id;
   db.todo.destroy({where: where}).then(function(todos){
     if (todos >= 1){
@@ -78,6 +77,35 @@ app.delete('/todos/:id', function(req, res){
     }
   }, function(err){
     res.status(500).send();
+  });
+});
+
+/** Update specific table record based on id using HTTP Put */
+app.put('/todos/:id', function(req, res) {
+  var id   = parseInt(req.params.id, 10);
+  var body = _.pick(req.body, 'description', 'completed');
+  var attributes = {};
+
+  if (body.hasOwnProperty('completed') && _.isBoolean(body.completed)) {
+    attributes.completed = body.completed;
+  }
+
+	if (body.hasOwnProperty('description') && _.isString(body.description)) {
+		attributes.description = body.description;
+	}
+
+  db.todo.findById(id).then(function(todo){
+    if (todo) {
+      return todo.update(attributes);
+    } else {
+      todo.status(404).json({"info": "Data not found"});
+    }
+  }, function(err){
+    res.status(500).json({"error": "Error occured!!"});
+  }).then(function(todo) {
+    res.json(todo.toJSON());
+  }, function(err){
+    res.status(400).json(err);
   });
 
 });
