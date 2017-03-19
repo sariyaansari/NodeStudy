@@ -99,16 +99,16 @@ app.put('/todos/:id', function(req, res) {
 
   db.todo.findById(id).then(function(todo){
     if (todo) {
-      return todo.update(attributes);
+      return todo.update(attributes).then(function(todo) {
+        res.json(todo.toJSON());
+      }, function(err){
+        res.status(400).json(err);
+      });
     } else {
-      todo.status(404).json({"info": "Data not found"});
+      res.status(404).json({"info": "Data not found"});
     }
   }, function(err){
     res.status(500).json({"error": "Error occured!!"});
-  }).then(function(todo) {
-    res.json(todo.toJSON());
-  }, function(err){
-    res.status(400).json(err);
   });
 
 });
