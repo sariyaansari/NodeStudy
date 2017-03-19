@@ -1,9 +1,9 @@
 var Sequelize = require('sequelize');
 var env = process.env.NODE_ENV || 'development';
 var sequelize;
-if (evn === 'production') {
+if (env === 'production') {
   //On heroku server this object will be used
-  sequelize = new Sequelize(process.env.DATABASE_URL, {'dialect': 'postgres',});
+  sequelize = new Sequelize(process.env.DATABASE_URL, {'dialect': 'postgres'});
 } else {
   //on localhost this object will be used
   sequelize = new Sequelize(undefined, undefined, undefined, {
