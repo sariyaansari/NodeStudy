@@ -113,6 +113,18 @@ app.put('/todos/:id', function(req, res) {
 
 });
 
+/** Add username & email in 'users' table using HTTP PUT */
+app.post('/user', function(req,res){
+  var body = _.pick(req.body, 'email', 'password');
+  db.user.create(body).then(function(user){
+    if (user) {
+      res.json(user.toJSON());
+    } 
+  }, function(err){
+    res.status(400).json(err);
+  });
+});
+
 /** syncing everything not only 'todo' table*/
 db.sequelize.sync().then(function(){
     //TODO : why to listen here

@@ -17,6 +17,8 @@ var db = {};
 
 //load sequelize model from other file and store in todo property
 db.todo = sequelize.import(__dirname.substr(0, __dirname.length-4) + '/models/todo.js');
+//load sequelize model from other file to refer table schema
+db.user = sequelize.import(__dirname.substr(0, __dirname.length-4) + '/models/user.js');
 //load sequelize instance
 db.sequelize = sequelize;
 //refer to lib instance by require
