@@ -125,6 +125,22 @@ app.post('/users', function(req,res){
   });
 });
 
+//Request HTTP GET to get user record where 'email' matched from table 'users'
+app.get('/users/:email', function(req,res) {
+  var email = req.params.email;
+  var where = {};
+  where.email = email;
+  db.user.findAll({where: where}).then(function(records){
+    if (records) {
+      res.json(records);
+    } else {
+      res.status(404).json({"info": "Data not found"});
+    }
+  }, function(err){
+    res.status(400).json(err);
+  });
+});
+
 /** syncing everything not only 'todo' table*/
 db.sequelize.sync().then(function(){
     //TODO : why to listen here
