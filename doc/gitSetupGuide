@@ -91,6 +91,22 @@ $ heroku pg:wait
 $ npm install pg@4.4.1 —save
 $ npm install pg-hstore@2.3.2 —save
 
+========================= How to remove & add heroku configuration ========
+Suppose heroku setup is having one fetch and push configured see by below command
+$ git remote -v
+heroku	https://git.heroku.com/sariya-web-test.git (fetch)
+heroku	https://git.heroku.com/sariya-web-test.git (push)
+origin	https://github.com/sariyaansari/NodeStudy.git (fetch)
+origin	https://github.com/sariyaansari/NodeStudy.git (push)
+
+Now I wanted to change my heroku push and fetch branch to host on heroku cloud
+$ git remote rm heroku => it will delete above mentioned heroku fetch & push branch
+
+Now I wanted to link my another heroku branch to push git code on heroku cloud
+$ git remote add https://git.heroku.com/vast-savannah-22280.git
+
+
+
 
 
 
