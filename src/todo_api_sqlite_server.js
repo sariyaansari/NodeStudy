@@ -118,7 +118,7 @@ app.post('/users', function(req,res){
   var body = _.pick(req.body, 'email', 'password');
   db.user.create(body).then(function(user){
     if (user) {
-      res.json(user.toJSON());
+      res.json(user.toPublicJSON());
     }
   }, function(err){
     res.status(400).json(err);
@@ -129,7 +129,7 @@ app.post('/users', function(req,res){
 app.get('/users/:email', function(req,res) {
   var email = req.params.email;
   var where = {};
-  where.email = email;
+  where.password = email;
   db.user.findAll({where: where}).then(function(records){
     if (records) {
       res.json(records);
@@ -140,6 +140,7 @@ app.get('/users/:email', function(req,res) {
     res.status(400).json(err);
   });
 });
+
 
 /** syncing everything not only 'todo' table*/
 db.sequelize.sync().then(function(){
