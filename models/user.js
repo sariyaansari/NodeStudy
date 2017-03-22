@@ -5,7 +5,7 @@ var _ = require('underscore');
 SCHEMA Structure for easy understanding of curly braces :
 module.export = function(sequelize, DataTypes) {
 sequelize.define('tableName', {
-                                fieldnames: {properties}, 
+                                fieldnames: {properties},
                                 {
                                   hooks: {properties},
                                   instanceMethods {properties}
@@ -15,7 +15,7 @@ sequelize.define('tableName', {
 };
 */
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('user', {
+  var user = sequelize.define('user', {
     email:{
       type: DataTypes.STRING,
       allowNull: false,
@@ -53,6 +53,30 @@ module.exports = function(sequelize, DataTypes) {
         }
       }
     },
+    classMethods: {
+      autheticateUserLogin: function(body) {
+        return new Promise(function(resolve, reject) {
+          var where = {};
+
+          if ( !(body.hasOwnProperty('email') && _.isString(body.email)) ) {
+            return reject();
+          } else {
+            where.email = body.email;
+          }
+          if ( !(body.hasOwnProperty('password') && _.isString(body.password)) ) {
+              return reject();
+          }
+          user.findOne({where: where}).then(function(record){
+            if (!record || !bcryptjs.compareSync(body.password, record.get('password_hash'))) {
+              return reject();
+            }
+            resolve(record);
+          }, function(record){
+            reject();
+          });
+        });
+      }
+    },
     instanceMethods: {
       toPublicJSON: function() {
         var json = this.toJSON();
@@ -60,4 +84,5 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+  return user;
 };

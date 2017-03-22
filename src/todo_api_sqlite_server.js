@@ -114,7 +114,7 @@ app.put('/todos/:id', function(req, res) {
 
 });
 
-/** Add username & email in 'users' table using HTTP PUT */
+/** Add username & email in 'users' table using HTTP Post */
 app.post('/users', function(req,res){
   var body = _.pick(req.body, 'email', 'password');
   db.user.create(body).then(function(user){
@@ -144,25 +144,11 @@ app.get('/users/:email', function(req,res) {
 
 app.post('/users/login', function(req, res) {
   var body = _.pick(req.body, 'email', 'password');
-  var where = {};
 
-  if ( !(body.hasOwnProperty('email') && _.isString(body.email)) ) {
-    return res.status(400).json({"error": "No login ID"});
-  } else {
-    where.email = body.email;
-  }
-
-  if ( !(body.hasOwnProperty('password') && _.isString(body.password)) ) {
-      return res.status(400).json({"error": " Invalid password"});
-  }
-
-  db.user.findOne({where: where}).then(function(record){
-    if (!record || !bcryptjs.compareSync(body.password, record.get('password_hash'))) {
-      return res.status(400).json({"error": "invalid request"});
-    }
+  db.user.autheticateUserLogin(body).then(function(record){
     res.json(record.toPublicJSON());
-  }, function(record){
-    res.status(500).send();
+  }, function(err){
+    res.status(401).send(err);
   });
 });
 
