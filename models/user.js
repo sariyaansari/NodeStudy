@@ -1,6 +1,19 @@
 var bcryptjs = require('bcryptjs');
 var _ = require('underscore');
 
+/**
+SCHEMA Structure for easy understanding of curly braces :
+module.export = function(sequelize, DataTypes) {
+sequelize.define('tableName', {
+                                fieldnames: {properties}, 
+                                {
+                                  hooks: {properties},
+                                  instanceMethods {properties}
+                                }
+                              }
+                );
+};
+*/
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('user', {
     email:{
