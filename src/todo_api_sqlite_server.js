@@ -130,7 +130,7 @@ app.post('/users', function(req,res){
 app.get('/users/:email', function(req,res) {
   var email = req.params.email;
   var where = {};
-  where.password = email;
+  where.email = email;
   db.user.findAll({where: where}).then(function(records){
     if (records) {
       res.json(records);
