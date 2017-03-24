@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/web-server.js"
+    "start": "node src/todo_api_sqlite_server.js.js"
   },
   "author": "Sariya",
   "license": "ISC",
