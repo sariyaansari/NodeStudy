@@ -2,15 +2,17 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
-var bcryptjs = require('bcryptjs')
+var bcryptjs = require('bcryptjs');
+var authmiddleware = require('./authmiddleware.js')(db);
 
 var app = express();
 var PORT = process.env.PORT || 9090; //replace 9090 with your choice of PORT No.
 
 app.use(bodyParser.json());
 
+
 //Request post received with data
-app.post('/todos', function(req, res) {
+app.post('/todos', authmiddleware.requireAuthentication, function(req, res) {
     //Parsing schema data from request body it could be there or not
     var body = _.pick(req.body, 'description', 'completed');
     //Creating record then sending response to sender
@@ -23,7 +25,7 @@ app.post('/todos', function(req, res) {
 });
 
 //Request HTTP GET to get specific record from sqlite table
-app.get('/todos/:id', function(req,res) {
+app.get('/todos/:id', authmiddleware.requireAuthentication, function(req,res) {
   var id = parseInt(req.params.id, 10);
   db.todo.findById(id).then(function(todo){
     if (todo) {
@@ -42,7 +44,7 @@ app.get('/todos/:id', function(req,res) {
 /** Get todos based on query e.g. /todos?completed=true */
 /** Get todos based on query e.g. /todos?completed=false&desc=work*/
 /** Note: where clause is working on OR condition for multiple conditions*/
-app.get('/todos', function(req, res){
+app.get('/todos', authmiddleware.requireAuthentication, function(req, res){
   var query = req.query;
   where = {};
 
@@ -69,7 +71,7 @@ app.get('/todos', function(req, res){
 });
 
 /** Delete record using HTTP delete from sqlite */
-app.delete('/todos/:id', function(req, res){
+app.delete('/todos/:id', authmiddleware.requireAuthentication, function(req, res){
   var id = parseInt(req.params.id, 10);
   where = {};
   where.id = id;
@@ -85,7 +87,7 @@ app.delete('/todos/:id', function(req, res){
 });
 
 /** Update specific table record based on requesting 'id' using HTTP PUT */
-app.put('/todos/:id', function(req, res) {
+app.put('/todos/:id', authmiddleware.requireAuthentication, function(req, res) {
   var id   = parseInt(req.params.id, 10);
   var body = _.pick(req.body, 'description', 'completed');
   var attributes = {};
@@ -114,7 +116,7 @@ app.put('/todos/:id', function(req, res) {
 
 });
 
-/** Add username & email in 'users' table using HTTP Post */
+/** Add username & email in 'users' table using HTTP Post, kind of signup*/
 app.post('/users', function(req,res){
   var body = _.pick(req.body, 'email', 'password');
   db.user.create(body).then(function(user){
@@ -142,11 +144,17 @@ app.get('/users/:email', function(req,res) {
   });
 });
 
+/** Login mechanism implemented using HTTP post */
 app.post('/users/login', function(req, res) {
   var body = _.pick(req.body, 'email', 'password');
 
   db.user.autheticateUserLogin(body).then(function(record){
-    res.json(record.toPublicJSON());
+    var sessionToken = record.generateToken('authentication');
+    if (sessionToken) {
+      res.header('Auth', sessionToken).json(record.toPublicJSON());
+    } else {
+      res.status(401).send({"error": "something went wrong"});
+    }
   }, function(err){
     res.status(401).send(err);
   });
