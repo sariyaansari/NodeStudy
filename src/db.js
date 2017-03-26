@@ -24,4 +24,8 @@ db.sequelize = sequelize;
 //refer to lib instance by require
 db.Sequelize = Sequelize;
 
+//make association between tables
+db.todo.belongsTo(db.user);
+db.user.hasMany(db.todo);
+
 module.exports = db;

@@ -18,7 +18,11 @@ app.post('/todos', authmiddleware.requireAuthentication, function(req, res) {
     //Creating record then sending response to sender
     //Note: Currently returning same data what is stored in sqlite
     db.todo.create(body).then(function (todo) {
-	       res.json(todo.toJSON());
+        req.user.addTodo(todo).then(function(todo){
+          return todo.reload();
+        }).then(function(todo){
+           res.json(todo.toJSON());
+        });
     }, function(err){
 	       res.status(404).json({"error": "could not store data"});
     });
