@@ -31,7 +31,10 @@ app.post('/todos', authmiddleware.requireAuthentication, function(req, res) {
 //Request HTTP GET to get specific record from sqlite table
 app.get('/todos/:id', authmiddleware.requireAuthentication, function(req,res) {
   var id = parseInt(req.params.id, 10);
-  db.todo.findById(id).then(function(todo){
+  var where = {};
+  where.id = id;
+  where.userId = req.user.get('id');
+  db.todo.findOne({where: where}).then(function(todo){
     if (todo) {
       res.json(todo.toJSON());
     } else {
@@ -79,6 +82,7 @@ app.delete('/todos/:id', authmiddleware.requireAuthentication, function(req, res
   var id = parseInt(req.params.id, 10);
   where = {};
   where.id = id;
+  where.userId = req.user.get('id');
   db.todo.destroy({where: where}).then(function(todos){
     if (todos >= 1){
       res.json({"info": "item deleted successfully"});
@@ -95,6 +99,10 @@ app.put('/todos/:id', authmiddleware.requireAuthentication, function(req, res) {
   var id   = parseInt(req.params.id, 10);
   var body = _.pick(req.body, 'description', 'completed');
   var attributes = {};
+  var where = {};
+
+  where.id = id;
+  where.userId = req.user.get('id');
 
   if (body.hasOwnProperty('completed') && _.isBoolean(body.completed)) {
     attributes.completed = body.completed;
@@ -104,7 +112,7 @@ app.put('/todos/:id', authmiddleware.requireAuthentication, function(req, res) {
 		attributes.description = body.description;
 	}
 
-  db.todo.findById(id).then(function(todo){
+  db.todo.findOne({where: where}).then(function(todo){
     if (todo) {
       return todo.update(attributes).then(function(todo) {
         res.json(todo.toJSON());
