@@ -173,7 +173,7 @@ app.post('/users/login', function(req, res) {
 });
 
 /** syncing everything not only 'todo' table*/
-db.sequelize.sync().then(function(){
+db.sequelize.sync({force:true}).then(function(){
     //TODO : why to listen here
     app.listen(PORT, function(req,res) {
     console.log('Server Running on port:' + PORT);
