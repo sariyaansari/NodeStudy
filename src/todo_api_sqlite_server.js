@@ -159,16 +159,25 @@ app.get('/users/:email', function(req,res) {
 /** Login mechanism implemented using HTTP post */
 app.post('/users/login', function(req, res) {
   var body = _.pick(req.body, 'email', 'password');
+  var recordInstance;
 
-  db.user.autheticateUserLogin(body).then(function(record){
+  db.user.autheticateUserLogin(body).then(function(record) {
     var sessionToken = record.generateToken('authentication');
-    if (sessionToken) {
-      res.header('Auth', sessionToken).json(record.toPublicJSON());
-    } else {
-      res.status(401).send({"error": "something went wrong"});
-    }
-  }, function(err){
-    res.status(401).send(err);
+    recordInstance = record;
+    return db.token.create({token: sessionToken});
+  }).then (function(sessionToken){
+    res.header('Auth', sessionToken.get('token')).json(recordInstance.toPublicJSON());
+  }).catch (function() {
+    res.status(401).send();
+  });
+});
+
+//Delete login
+app.delete('/users/login', authmiddleware.requireAuthentication, function(req, res) {
+  req.token.destroy().then(function(){
+    res.status(204).send();
+  }).catch(function(){
+    res.status(500).send();
   });
 });
 
